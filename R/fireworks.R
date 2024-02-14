@@ -1,8 +1,9 @@
 library(ggplot2)
 library(gganimate)
+library(png)
 
 
-generate_explosion <- function(n_fireworks = 2, n_rounds = 2) {
+generate_explosion <- function(n_fireworks = 2, n_rounds = 2, moon_img = NA) {
   
   # Define bounds for firework initiation
   max_height <- 100
@@ -102,15 +103,36 @@ generate_explosion <- function(n_fireworks = 2, n_rounds = 2) {
   x_lims <- c(max_left*2, max_right*2)
   y_lims <- c(-abs(min(rounds$y))*2, max_height*2)
   
-  p <- ggplot(rounds, aes(x, y)) + 
+  # Initialize plot
+  p <- ggplot(rounds, aes(x, y)) 
+  
+  # Add moon as background if image exists
+  if (!is.null(moon_img)) {
+    
+    p <- p +
+      annotation_raster(moon_img, 
+                        xmin = x_lims[1], 
+                        xmax = (sum(abs(x_lims[1]), x_lims[2])*0.15 + x_lims[1]), 
+                        ymin = (sum(abs(y_lims[1]), y_lims[2])*0.85 + y_lims[1]), 
+                        ymax = y_lims[2])
+    
+  }
+  
+  # Create plot
+  p <- p + 
     geom_point(shape = 16, aes(color = colors, size = size, 
                                group = firework, alpha = alpha)) + 
-    xlim(x_lims) + ylim(y_lims) + 
+    xlim(x_lims[1], x_lims[2]) + ylim(y_lims[1], y_lims[2]) + 
+    # Scale point size
     scale_size_area(max_size = 2) + 
     theme_void() + 
     theme(legend.position = "none", 
           plot.background = element_rect(fill = "black")) + 
-    transition_time(time)
+    transition_time(time) + 
+    # Add grass as ground
+    geom_rect(xmin = x_lims[1], xmax = x_lims[2], 
+              ymin = y_lims[1], ymax =(sum(abs(y_lims[1]), y_lims[2])*0.20 + y_lims[1]), 
+              fill = "#2A562D", alpha = 0.85) 
   
   return(p)
   
@@ -118,21 +140,21 @@ generate_explosion <- function(n_fireworks = 2, n_rounds = 2) {
 
 
 # Create fireworks show!!
-n_fireworks <- 10
-n_rounds <- 4
-p <- generate_explosion(n_fireworks = n_fireworks, n_rounds = n_rounds)
+n_fireworks <- 5
+n_rounds <- 1
+# Load moon image
+moon_img <- png::readPNG(file.path(getwd(), "img/moon.png"))
+p <- generate_explosion(n_fireworks = n_fireworks, n_rounds = n_rounds, moon_img = moon_img)
 
 # Animate
-# ANIMATING LARGE TOTAL NUM OF FIREWORKS MAY CAUSE CRASH
-# IF (N_FIREWORKS * N_ROUNDS) IS LARGE (E.G. ~100) DO NOT ANIMATE IN RSTUDIO
-# SAVE IT DIRECTLY THEN OPEN THE FILE
 animate(plot = p, 
         nframes = max(p$data$time) - min(p$data$time), 
         fps = 10)
 
+# Store it!
 a <- animate(plot = p, 
              nframes = max(p$data$time) - min(p$data$time), 
              fps = 10)
 
 # Save it!!
-anim_save(filename = "fireworks.gif", path = file.path(getwd()), animation = a)
+anim_save(filename = "fireworks.gif", path = getwd(), animation = a)
