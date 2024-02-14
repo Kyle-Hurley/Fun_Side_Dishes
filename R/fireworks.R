@@ -140,21 +140,19 @@ generate_explosion <- function(n_fireworks = 2, n_rounds = 2, moon_img = NA) {
 
 
 # Create fireworks show!!
-n_fireworks <- 5
-n_rounds <- 1
+n_fireworks <- 8
+n_rounds <- 3
 # Load moon image
 moon_img <- png::readPNG(file.path(getwd(), "img/moon.png"))
 p <- generate_explosion(n_fireworks = n_fireworks, n_rounds = n_rounds, moon_img = moon_img)
 
-# Animate
-animate(plot = p, 
-        nframes = max(p$data$time) - min(p$data$time), 
-        fps = 10)
-
-# Store it!
+# Animate it!
 a <- animate(plot = p, 
              nframes = max(p$data$time) - min(p$data$time), 
              fps = 10)
+
+# Play it!
+a
 
 # Save it!!
 anim_save(filename = "fireworks.gif", path = getwd(), animation = a)
