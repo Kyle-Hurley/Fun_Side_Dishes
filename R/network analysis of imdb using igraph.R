@@ -235,7 +235,6 @@ ggplot(degrees, aes(x = Var1, y = Freq)) +
     axis.text.y = element_text(size = 14, angle = 45, hjust = 1), 
     axis.ticks = element_blank(), 
     legend.position = "none", 
-    plot.background = element_blank(), 
     panel.background = element_blank(), 
     panel.grid.major.y = element_line(color = "#e1e1e1"), 
     panel.grid.major.x = element_blank(), 
@@ -252,11 +251,11 @@ rm(degrees, actor_degrees, actor_vertex_ids, kb_percentile, kb_degree, all_degre
 # Compare 6 Degrees of Separation -----------------------------------------
 
 
-vd_vertex <- which(V(graph)$name == of_interest[of_interest$primaryName == "Viola Davis", ]$nconst)
+ss_vertex <- which(V(graph)$name == of_interest[of_interest$primaryName == "Sydney Sweeney", ]$nconst)
 ps_vertex <- which(V(graph)$name == of_interest[of_interest$primaryName == "Patrick Stewart", ]$nconst)
 # Calculate the shortest paths from Viola Davis to all other nodes
 dist_to_vd <- distances(graph = graph, 
-                        v = vd_vertex, 
+                        v = ss_vertex, 
                         # v = of_interest[of_interest$primaryName == "Viola Davis", ]$nconst, 
                         to = V(graph), mode = "all")
 dist_to_ps <- distances(graph = graph, 
@@ -264,8 +263,8 @@ dist_to_ps <- distances(graph = graph,
                         to = V(graph), mode = "all")
 
 # Prepare data for both actors
-vd_path_freq <- as.data.frame(table(PathLength = as.numeric(dist_to_vd[-vd_vertex]) - 1))
-vd_path_freq$Actor <- "Viola Davis"
+vd_path_freq <- as.data.frame(table(PathLength = as.numeric(dist_to_vd[-ss_vertex]) - 1))
+vd_path_freq$Actor <- "Sydney Sweeney"
 
 ps_path_freq <- as.data.frame(table(PathLength = as.numeric(dist_to_ps[-ps_vertex]) - 1))
 ps_path_freq$Actor <- "Patrick Stewart"
@@ -275,19 +274,18 @@ combined_path_freq <- rbind(vd_path_freq, ps_path_freq)
 
 ggplot(combined_path_freq, aes(x = PathLength, y = Freq, fill = Actor)) +
   geom_col(position = position_dodge(0.8), width = 0.75) + 
-  scale_fill_manual(values = c("Viola Davis" = "#FF7F00", "Patrick Stewart" = "#4DAF4A")) + 
-  geom_text(aes(label = Freq), 
+  scale_fill_manual(values = c("Sydney Sweeney" = "#984EA3", "Patrick Stewart" = "#4DAF4A")) + 
+  geom_text(aes(label = scales::comma(Freq)), 
             position = position_dodge(width = 0.9), 
-            vjust = -0.25, size = 12/.pt) + 
+            vjust = -0.25, size = 10/.pt) + 
   xlim("0", "1", "2", "3", "4", "5", "6") + 
   labs(x = "Degrees From", 
        y = "Number of People (Log Scale)") + 
   scale_y_log10(breaks = c(100, 10000, 1000000), 
                 labels = c("100", "10,000", "1,000,000")) + 
-  annotate("text", x = 1.5, y = 50000, 
-           label = "Both Viola and Sir Patrick display\nsmall-world properties of networks", 
-           size = 14/.pt, angle = 30) + 
-  theme_minimal() +
+  annotate("text", x = 2, y = 300000, 
+           label = "Even newer performers can quickly\nbecome central in the TV/Movie network", 
+           size = 16/.pt) + 
   theme(
     plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
     axis.title.x = element_text(size = 14, vjust = -0.2),
@@ -298,7 +296,6 @@ ggplot(combined_path_freq, aes(x = PathLength, y = Freq, fill = Actor)) +
     legend.position = "bottom", 
     legend.title = element_blank(), 
     legend.text = element_text(size = 14), 
-    plot.background = element_blank(),
     panel.background = element_blank(),
     panel.grid.major.y = element_line(color = "#e1e1e1"), 
     panel.grid.major.x = element_blank(), 
@@ -306,5 +303,5 @@ ggplot(combined_path_freq, aes(x = PathLength, y = Freq, fill = Actor)) +
     panel.border = element_blank()
   )
 
-ggsave(filename = file.path(getwd(), "Viola Davis and Patrick Stewart Degrees From Histogram.png"), 
+ggsave(filename = file.path(getwd(), "Sydney Sweeney and Patrick Stewart Degrees From Histogram.png"), 
        plot = last_plot())
