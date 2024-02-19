@@ -191,7 +191,6 @@ degrees <- as.data.frame(table(degree(graph, mode = "all")))
 degrees$Var1 <- as.numeric(degrees$Var1)
 
 # For comparison
-
 actor_vertex_ids <- which(V(graph)$name %in% of_interest$nconst)
 actor_degrees <- degree(graph)[actor_vertex_ids]
 actor_degrees <- actor_degrees[match(of_interest$nconst, names(actor_degrees))]
@@ -205,23 +204,13 @@ actor_degrees <- data.frame(Name = names(actor_degrees),
                             check.names = FALSE)
 actor_degrees <- actor_degrees[order(actor_degrees$`1st Degree Connections`, decreasing = TRUE), ]
 
-ggplot(degrees, aes(x = Var1, y = Freq)) +
-  # Use geom_col to create the bars and fill them with a pleasant color
+ggplot(degrees, aes(x = Var1, y = Freq)) + 
   geom_col(fill = "#69b3a2") + 
   xlim(0, 20) + 
   scale_y_continuous(breaks = c(500000, 1000000, 1500000, 2000000), 
                 labels = c("0.5", "1.0", "1.5", "2.0")) + 
   ylab("Number of People (million)") + 
   xlab("Number of Connections") + 
-  # annotate("text", 
-  #          label = paste0(
-  #            "Kevin Bacon has \n", 
-  #            kb_degree, 
-  #            " 1st degree connections, \nputting him in the ", 
-  #            round(kb_percentile, digits = 2), 
-  #            " percentile."
-  #          ), 
-  #          x = 15, y = 1600000, size = 18/.pt) + 
   annotate("text", 
            label = paste0(
              "Most TV/Movie performers only have \n1 to 4 1st degree connections!"
@@ -238,23 +227,19 @@ ggplot(degrees, aes(x = Var1, y = Freq)) +
                                 "Percentile"), 
                               theme = ttheme_minimal()), 
                     xmin = 14, xmax = 19, ymin = 1000000, ymax = 1500000) + 
-  # Customizing the appearance of the plot 
   theme(
-    # Customizing the title and labels using theme elements
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
-    axis.title.x = element_text(size = 14, vjust = -0.2),
-    axis.title.y = element_text(size = 14, vjust = 1.2),
-    axis.text.x = element_text(size = 14),
-    axis.text.y = element_text(size = 14, angle = 45, hjust = 1),
-    axis.ticks = element_blank(),
-    # Customizing the legend (if applicable)
-    legend.position = "none",
-    # Modifying plot background
-    plot.background = element_blank(),
-    panel.background = element_blank(),
-    panel.grid.major.y = element_line(color = "#e1e1e1"),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor = element_blank(),
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5), 
+    axis.title.x = element_text(size = 14, vjust = -0.2), 
+    axis.title.y = element_text(size = 14, vjust = 1.2), 
+    axis.text.x = element_text(size = 14), 
+    axis.text.y = element_text(size = 14, angle = 45, hjust = 1), 
+    axis.ticks = element_blank(), 
+    legend.position = "none", 
+    plot.background = element_blank(), 
+    panel.background = element_blank(), 
+    panel.grid.major.y = element_line(color = "#e1e1e1"), 
+    panel.grid.major.x = element_blank(), 
+    panel.grid.minor = element_blank(), 
     panel.border = element_blank()
   )
 
@@ -264,7 +249,8 @@ ggsave(filename = file.path(getwd(), "People by Number of Connections in 1st Deg
 rm(degrees, actor_degrees, actor_vertex_ids, kb_percentile, kb_degree, all_degrees)
 
 
-# Filter Dataset For 6 Degrees of Separation ------------------------------
+# Compare 6 Degrees of Separation -----------------------------------------
+
 
 vd_vertex <- which(V(graph)$name == of_interest[of_interest$primaryName == "Viola Davis", ]$nconst)
 ps_vertex <- which(V(graph)$name == of_interest[of_interest$primaryName == "Patrick Stewart", ]$nconst)
