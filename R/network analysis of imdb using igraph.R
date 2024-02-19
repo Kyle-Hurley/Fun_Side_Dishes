@@ -143,7 +143,8 @@ ggplot(data = hold, aes(x = Year, y = Degrees, color = Name, group = Name)) +
   geom_line(size = 2) + 
   geom_point(size = 3, shape = 21, fill = "white") + 
   scale_color_brewer(palette = "Set1") + 
-  labs(title = "1st Degree Connections Over Time") + 
+  labs(title = "1st Degree Connections Over Time", 
+       ylab = "") + 
   annotate("text", x = 1980, y = 250, 
            label = "Sharp increases\nindicate high demand!", 
            size = 16/.pt) + 
@@ -161,7 +162,7 @@ ggplot(data = hold, aes(x = Year, y = Degrees, color = Name, group = Name)) +
     legend.title = element_blank(), 
     plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
     axis.title.x = element_blank(),
-    axis.title.y = element_text(size = 14, vjust = 1.2),
+    axis.title.y = element_blank(),
     axis.text.x = element_text(size = 14),
     axis.text.y = element_text(size = 14, angle = 45, hjust = 1),
     axis.ticks = element_blank(),
