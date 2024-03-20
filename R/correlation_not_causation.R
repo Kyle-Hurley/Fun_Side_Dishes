@@ -28,7 +28,7 @@ df <- full_join(ice_cream, yearly_attacks) %>%
                names_to = "metric", values_to = "value")
 
 ggplot(data = df, aes(x = year, y = value)) + 
-  geom_line(aes(group = metric, color = metric)) + 
+  geom_line(aes(group = metric, color = metric), linewidth = 1) + 
   scale_color_manual(
     labels = c("Ice Cream Production Index", "Shark Attacks"), 
     values = c("brown", "purple")
@@ -38,3 +38,6 @@ ggplot(data = df, aes(x = year, y = value)) +
   theme(legend.title = element_blank(), 
         axis.title = element_blank(), 
         legend.position = "bottom")
+
+# Obviously, ice cream production does not correlate to or cause shark attacks
+# Be wary of claims using little, insufficient, and/or misrepresented data!
