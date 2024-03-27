@@ -9,10 +9,26 @@ ui <- fluidPage(
       let snake_body = [{x: 300, y: 300}]; 
       let snake_direction = 'STOP'; 
       
+      function check_collision(x, y, array) {
+        for (let i = 1; i < array.length; i++) {
+          if (array[i].x === x && array[i].y === y) {
+            return true;
+          }
+        }
+        return false;
+      }
+      
       // Snake head and body positioning
       function update_snake_position() {
         let new_head_position = {x: snake_body[0].x, y: snake_body[0].y};
-
+        
+        // Check for self-collision
+        if (check_collision(new_head_position.x, new_head_position.y, snake_body)) {
+          $('#game-over-message').show(); // Show game over message
+          clearInterval(updateInterbval); // Stop the game
+          return;
+        }
+        
         // Dynamic snake head position
         switch(snake_direction) {
           case 'up': new_head_position.y = Math.max(0, new_head_position.y - 20); break;
@@ -104,12 +120,31 @@ ui <- fluidPage(
     ))
   ), 
   
-  div(id = "game-area", style = "width: 600px; height: 600px; border: 1px solid black; position: relative;", 
-      div(id = "apple", style = "width: 20px; height: 20px; background-color: red; position: absolute;")
+  div(id = "game-area", style = "width: 600px; height: 600px; border: 1px solid black; 
+      position: relative;", 
+      div(id = "apple", style = "width: 20px; height: 20px; background-color: red; 
+          position: absolute;"), 
+      div(id = "game-over-message", style = "margin: 0; display: none; position: absolute; 
+          top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); 
+          transform: translate(-50%, -50%); background-color: white; padding: 20px; 
+          border-radius: 10px; text-align: center; z-index: 100;", 
+          h2("Game Over!"), 
+          actionButton("restart", "Restart", class = "btn-primary"))
   )
 )
 
-server <- function(input, output, session) {}
+server <- function(input, output, session) {
+  
+  observeEvent(input$restart, {
+    shinyjs::runjs('
+     snake_body = [{x: 300, y: 300}];
+     snake_direction = "STOP";
+     $("#game-over-message").hide();
+     place_apple();
+     updateInterval = setInterval(update_snake_position, 200);
+    ')
+  })
+  
+}
 
 shinyApp(ui = ui, server = server)
-
